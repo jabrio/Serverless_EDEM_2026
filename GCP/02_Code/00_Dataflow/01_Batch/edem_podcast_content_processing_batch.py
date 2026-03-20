@@ -192,12 +192,12 @@ def run():
     
     parser.add_argument(
                 '--bigquery_dataset',
-                required=False,
+                required=True,
                 help='BigQuery dataset name.')
     
     parser.add_argument(
                 '--bigquery_table',
-                required=False,
+                required=True,
                 help='BigQuery table name.')
     
     args, pipeline_opts = parser.parse_known_args()
