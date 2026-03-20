@@ -218,20 +218,20 @@ def run():
 
         processed_audio_files = (
             audio_files
-                | "ReadAudioFiles" >> beam.Map(read_audio_files)
-                | "TranscribeAudio" >> RunInference(audio_model_handler)
-                | "ExtractTranscription" >> beam.Map(extract_text_from_prediction)
-                | "ClassifyTopic" >> RunInference(KeyedModelHandler(topic_model_handler))
-                | "MapLabelMapping" >> beam.Map(label_mapping)
-                | "GetMetadataFromFile" >> beam.ParDo(GetMetadataFromFileDoFn(args.project_id))
+                | "ReadAudioFiles" >> #ToDo
+                | "TranscribeAudio" >> #ToDo
+                | "ExtractTranscription" >> #ToDo
+                | "ClassifyTopic" >> #ToDo
+                | "MapLabelMapping" >> #ToDo
+                | "GetMetadataFromFile" >> #ToDo
         )
 
-        processed_audio_files | "WriteToFirestore" >> beam.ParDo(FormatFirestoreDocument(args.firestore_collection, args.project_id))
+        processed_audio_files | "WriteToFirestore" >> #ToDo
         
-        # (
-        #     processed_audio_files |
-        #     "WriteToBigQuery" >> #ToDo
-        # )
+        (
+            processed_audio_files |
+            "WriteToBigQuery" >> #ToDo
+        )
 
 if __name__ == '__main__':
 
