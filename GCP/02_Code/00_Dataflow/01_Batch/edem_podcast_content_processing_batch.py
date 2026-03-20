@@ -146,7 +146,8 @@ class GetMetadataFromFileDoFn(beam.DoFn):
             "show_id": blob.metadata.get("show_id"),
             "episode_id": blob.metadata.get("episode_id"),
             "duration": blob.metadata.get("duration"),
-            "status": blob.metadata.get("status")
+            "status": blob.metadata.get("status"),
+            "duration_sec": blob.metadata.get("duration_sec")
         }
 
 class FormatFirestoreDocument(beam.DoFn):
@@ -191,12 +192,12 @@ def run():
     
     parser.add_argument(
                 '--bigquery_dataset',
-                required=True,
+                required=False,
                 help='BigQuery dataset name.')
     
     parser.add_argument(
                 '--bigquery_table',
-                required=True,
+                required=False,
                 help='BigQuery table name.')
     
     args, pipeline_opts = parser.parse_known_args()
@@ -217,20 +218,20 @@ def run():
 
         processed_audio_files = (
             audio_files
-                | "ReadAudioFiles" >> #ToDo
-                | "TranscribeAudio" >> #ToDo
-                | "ExtractTranscription" >> #ToDo
-                | "ClassifyTopic" >> #ToDo
-                | "MapLabelMapping" >> #ToDo
-                | "GetMetadataFromFile" >> #ToDo
+                | "ReadAudioFiles" >> beam.Map(read_audio_files)
+                | "TranscribeAudio" >> RunInference(audio_model_handler)
+                | "ExtractTranscription" >> beam.Map(extract_text_from_prediction)
+                | "ClassifyTopic" >> RunInference(KeyedModelHandler(topic_model_handler))
+                | "MapLabelMapping" >> beam.Map(label_mapping)
+                | "GetMetadataFromFile" >> beam.ParDo(GetMetadataFromFileDoFn(args.project_id))
         )
 
-        processed_audio_files | "WriteToFirestore" >> #ToDo
+        processed_audio_files | "WriteToFirestore" >> beam.ParDo(FormatFirestoreDocument(args.firestore_collection, args.project_id))
         
-        (
-            processed_audio_files |
-            "WriteToBigQuery" >> #ToDo
-        )
+        # (
+        #     processed_audio_files |
+        #     "WriteToBigQuery" >> #ToDo
+        # )
 
 if __name__ == '__main__':
 
