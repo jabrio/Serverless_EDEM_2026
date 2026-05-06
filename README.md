@@ -7,4 +7,3 @@ EDEM 2026
 
 - [Google Cloud Resources](./GCP/README.md)
 - [Amazon Web Services Resources](./AWS/README.md)
-  
