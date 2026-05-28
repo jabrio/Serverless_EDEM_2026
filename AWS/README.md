@@ -439,7 +439,34 @@ As a final step, we will store streaming events inside a data lake for later ana
 ### Query Data with Athena
 
 - Open the Athena Console.
-- Run analytical SQL queries against the data stored in S3.
+- In the **Query editor** tab, create an Athena database.
+
+```sql
+CREATE DATABASE IF NOT EXISTS <YOUR_DATABASE_NAME>;
+```
+
+- Create an external table over the data stored in S3.
+
+```sql
+CREATE EXTERNAL TABLE <YOUR_DATABASE_NAME>.<YOUR_TABLE_NAME> (
+  timestamp string,
+  user_id string,
+  event_type string,
+  item_id string,
+  event_value string
+)
+ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe'
+LOCATION '<YOUR_S3_PATH>';
+```
+
+- Run a query to validate that Athena can read the data.
+
+```sql
+SELECT *
+FROM <YOUR_DATABASE_NAME>.<YOUR_TABLE_NAME>
+LIMIT 10;
+```
+
 - Build queries that best explain the business behavior and streaming activity generated during the exercise.
 
 ## Event-Driven Architecture
