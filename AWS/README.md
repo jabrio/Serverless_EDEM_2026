@@ -163,7 +163,7 @@ Different types of event consumers coexist within the platform:
 
         - Open the IAM Console.
         - Click **Users** → **Create user**.
-        - Provide a username (e.g. `serverless-lab-user`).
+        - Provide a username.
         - Enable:
 
         ```text
